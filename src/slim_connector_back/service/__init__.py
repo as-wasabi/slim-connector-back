@@ -1,0 +1,2 @@
+class DbService:
+    pass
