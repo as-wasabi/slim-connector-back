@@ -11,7 +11,7 @@ class Client:
         headers = {}
         if token is not None:
             headers["Authorization"] = f"Bearer {token}"
-        result = await self.client.get(path, headers=headers)
+        result = await self.client.get_or_none(path, headers=headers)
         return result
 
     async def post(self, path: str, json_data: pydantic.BaseModel, token: str | None = None):
