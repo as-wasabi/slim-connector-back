@@ -1,43 +1,27 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"log"
-	"net/http"
 	"slim-connector-back/config"
 	"slim-connector-back/internal/repository"
+	"slim-connector-back/internal/server"
 )
 
 func main() {
-	engine := gin.Default()
-	engine.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "hello world",
-		})
-
-		cfg, err := config.LoadConfig("")
-
-		if err != nil {
-			log.Fatalf("Cant Load config: %v", err)
-		}
-
-		mongoDB, err := repository.FetchMongoDB(cfg)
-		if err != nil {
-			return
-		}
-
-		defer func(mongoDB *repository.MongoDB) {
-			err := mongoDB.Close()
-			if err != nil {
-
-			}
-		}(mongoDB)
-	})
-
-	err := engine.Run(":3000")
+	cfg, err := config.LoadConfig("")
 
 	if err != nil {
-		println(err)
+		log.Fatal(err)
+	}
+
+	mongoDB, err := repository.FetchMongoDB(cfg)
+	if err != nil {
+		log.Fatal(err)
 		return
+	}
+
+	srv := server.TasQServer(mongoDB)
+	if err := srv.Run(":3000"); err != nil {
+		log.Fatal(err)
 	}
 }
