@@ -1,4 +1,4 @@
-package handler
+package user
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
-	"slim-connector-back/internal/repository"
+	"slim-connector-back/internal"
 	"slim-connector-back/model"
 	"time"
 )
@@ -15,9 +15,13 @@ type UserHandler struct {
 	collection *mongo.Collection
 }
 
-func NewUserHandler(mongoDB *repository.MongoDB) *UserHandler {
-	collection := mongoDB.Database.Collection("users")
+func NewUserHandler(initializer *internal.Initializer) *UserHandler {
+	collection := initializer.Database.Collection("users")
 	return &UserHandler{collection: collection}
+}
+func (receiver UserHandler) InitRoute(group *gin.RouterGroup) {
+	group.POST("/users", receiver.CreateUser)
+	group.GET("/users", receiver.GetUsers)
 }
 
 func (h *UserHandler) CreateUser(c *gin.Context) {
@@ -48,31 +52,5 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 		"message": "User Created Successfully",
 		"user_id": result.InsertedID,
 	})
-
-}
-
-func (h *UserHandler) GetUsers(c *gin.Context) {
-	cursor, err := h.collection.Find(context.Background(), bson.M{})
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	defer func(cursor *mongo.Cursor, ctx context.Context) {
-		err := cursor.Close(ctx)
-		if err != nil {
-
-		}
-	}(cursor, context.Background())
-
-	var users []model.User
-
-	if err = cursor.All(context.Background(), &users); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-
-	}
-
-	c.JSON(http.StatusOK, users)
 
 }
