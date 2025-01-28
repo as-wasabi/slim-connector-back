@@ -15,6 +15,7 @@ func main() {
 	initializer.InitRoute(
 		handler.InitRoute(initializer)...,
 	)
+
 	if err := initializer.Server.Run(":3000"); err != nil {
 		log.Fatal(err)
 	}
