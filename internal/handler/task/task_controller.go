@@ -18,5 +18,6 @@ func NewTaskHandler(initializer *internal.Initializer) *TaskHandler {
 func (h *TaskHandler) InitRoute(group *gin.RouterGroup) {
 	group.GET("/tasks", h.GetTask)
 	group.POST("/tasks", h.CreateTask)
+	group.PATCH("/tasks", h.PatchTask)
 
 }
