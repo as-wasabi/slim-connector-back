@@ -17,4 +17,5 @@ func NewUserHandler(initializer *internal.Initializer) *UserHandler {
 func (h *UserHandler) InitRoute(group *gin.RouterGroup) {
 	group.POST("/users", h.CreateUser)
 	group.GET("/users", h.GetUsers)
+	group.PATCH("/users", h.PatchUser)
 }

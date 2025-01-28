@@ -17,7 +17,8 @@ func (h *TaskHandler) CreateTask(c *gin.Context) {
 		return
 	}
 
-	//existingTask := h.collection.FindOne(context.Background(), bson.M{"id": task.ID})
+	// 既存タスクチェックする？id生成的にダブんなくね???
+	// existingTask := h.collection.FindOne(context.Background(), bson.M{"id": task.ID})
 
 	task.CreatedAt = time.Now()
 

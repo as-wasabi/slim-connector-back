@@ -1,4 +1,4 @@
-package task
+package user
 
 import (
 	"context"
@@ -9,19 +9,19 @@ import (
 	"time"
 )
 
-func (h *TaskHandler) PatchTask(c *gin.Context) {
-	var task model.Task
-	//taskID := c.Param("id") // 将来的にurlからid取得 -> 今はurlからbindしてる。
+func (h *UserHandler) PatchUser(c *gin.Context) {
+	var user model.User
+	//userID := c.Param("id")
 
-	if err := c.BindJSON(&task); err != nil {
+	if err := c.BindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	task.UpdateAt = time.Now()
+	user.UpdateAt = time.Now()
 
-	filter := bson.D{{"_id", task.ID}} // change task.ID -> taskID
-	update := bson.D{{"$set", task}}
+	filter := bson.D{{"_id", user.ID}}
+	update := bson.D{{"$set", user}}
 
 	result, err := h.collection.UpdateOne(context.Background(), filter, update)
 
