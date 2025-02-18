@@ -12,6 +12,7 @@ func main() {
 		log.Fatal(err)
 		return
 	}
+
 	initializer.InitRoute(
 		handler.InitRoute(initializer)...,
 	)

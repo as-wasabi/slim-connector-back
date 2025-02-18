@@ -40,6 +40,15 @@ func (receiver Initializer) InitRoute(routes ...Route) {
 		route.InitRoute(api)
 	}
 }
+
+func (receiver Initializer) InitAIRoute(routes ...Route) {
+	api := receiver.Engine.Group("/openai")
+
+	for _, route := range routes {
+		route.InitRoute(api)
+	}
+}
+
 func initMongo(cfg *config.Config) (*repository.MongoDB, error) {
 	mongoDB, err := repository.FetchMongoDB(cfg)
 	if err != nil {

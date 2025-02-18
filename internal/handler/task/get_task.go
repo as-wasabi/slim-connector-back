@@ -9,6 +9,8 @@ import (
 	"slim-connector-back/model"
 )
 
+// Todo:Filterつけれるようにする
+
 func (h *TaskHandler) GetTask(c *gin.Context) {
 	cursor, err := h.collection.Find(context.Background(), bson.M{})
 	if err != nil {
