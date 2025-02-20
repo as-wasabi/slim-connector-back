@@ -16,5 +16,5 @@ func NewOpenAIHandler(initializer *internal.Initializer) *OpenAIHandler {
 }
 
 func (h *OpenAIHandler) InitRoute(group *gin.RouterGroup) {
-	group.GET("/openai", h.FetchApi)
+	group.GET("/openai", h.ExtractedTask)
 }

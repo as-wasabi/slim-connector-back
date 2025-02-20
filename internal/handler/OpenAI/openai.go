@@ -3,6 +3,7 @@ package OpenAI
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/openai/openai-go"
@@ -18,21 +19,26 @@ type ExtractedInfo struct {
 	Context string    `json:"context" bson:"context"`
 }
 
-func (h *OpenAIHandler) FetchApi(c *gin.Context) {
+func LoadEnv() error {
 	err := godotenv.Load()
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"Not Found .ENV FILE": "error"})
+		return err
 	}
+	return nil
+}
 
+func CreateNewClient() (*openai.Client, error) {
 	ApiKey, found := os.LookupEnv("OPENAI_API_KEY")
 	if !found {
-		c.JSON(http.StatusNotFound, gin.H{"Not Found API KEY": "error"})
+		return nil, fmt.Errorf("API key not found in environment variables")
 	}
-
 	client := openai.NewClient(
 		option.WithAPIKey(ApiKey),
 	)
+	return client, nil
+}
 
+func GetAIResponse(client *openai.Client) (*openai.ChatCompletion, error) {
 	// UTCに変える...?
 	systemPrompt := `あなたはスケジュール管理AIです。
 [開始日時]「終了日時」は次のレイアウトに従ってください。
@@ -47,9 +53,7 @@ layout = "2006-01-02T15:04:05Z07:00"
 見つからない場合は "start" または "end" を null にしてください。
 {}の中身以外の内容は出力しないようにしてください
 今日の日付は2025年2月18日です。
-
 `
-
 	chatCompletion, err := client.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{
 		Messages: openai.F([]openai.ChatCompletionMessageParamUnion{
 			openai.SystemMessage(systemPrompt),
@@ -58,13 +62,39 @@ layout = "2006-01-02T15:04:05Z07:00"
 		Model: openai.F(openai.ChatModelGPT4o),
 	})
 
+	return chatCompletion, err
+
+}
+
+func ExtractedAIResp(chatCompletion *openai.ChatCompletion) (ExtractedInfo, error) {
 	var extracted ExtractedInfo
 	rawResponse := chatCompletion.Choices[0].Message.Content
 
-	err = json.Unmarshal([]byte(rawResponse), &extracted)
+	err := json.Unmarshal([]byte(rawResponse), &extracted)
+
+	return extracted, err
+}
+
+func (h *OpenAIHandler) ExtractedTask(c *gin.Context) {
+	err := LoadEnv()
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"Not Found .ENV FILE": "error"})
+	}
+	client, err := CreateNewClient()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	chatCompletion, err := GetAIResponse(client)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to GET AI response"})
+	}
+
+	extracted, err := ExtractedAIResp(chatCompletion)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to parse AI response"})
-		println(err.Error())
+		//println(err.Error())
 		return
 	}
 
