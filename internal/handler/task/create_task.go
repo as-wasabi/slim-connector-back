@@ -19,6 +19,7 @@ func BindTaskJson(c *gin.Context) (*model.Task, error) {
 
 func (h *TaskHandler) InsertTaskData(task *model.Task) (*mongo.InsertOneResult, error) {
 	task.CreatedAt = time.Now()
+	task.ID = h.node.Generate().String()
 	result, err := h.collection.InsertOne(context.Background(), task)
 
 	return result, err
@@ -44,4 +45,12 @@ func (h *TaskHandler) CreateTask(c *gin.Context) {
 		"message": "Task Created Successfully",
 		"user_id": result.InsertedID,
 	})
+}
+
+func (h *TaskHandler) CreateTaskFromAIResponse(task *model.Task) error {
+	task.CreatedAt = time.Now()
+	task.ID = h.node.Generate().String()
+
+	_, err := h.collection.InsertOne(context.Background(), task)
+	return err
 }

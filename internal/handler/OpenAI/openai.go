@@ -10,6 +10,7 @@ import (
 	"github.com/openai/openai-go/option"
 	"net/http"
 	"os"
+	"slim-connector-back/model"
 	"time"
 )
 
@@ -101,8 +102,14 @@ func (h *OpenAIHandler) ExtractedTask(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"start":   extracted.Start,
-		"end":     extracted.End,
-		"context": extracted.Context})
+	taskData := &model.Task{
+		Start:   extracted.Start,
+		End:     extracted.End,
+		Context: extracted.Context,
+	}
+
+	err = h.TaskHandler.CreateTaskFromAIResponse(taskData)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+	}
 }

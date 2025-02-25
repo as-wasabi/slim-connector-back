@@ -1,18 +1,28 @@
 package task
 
 import (
+	"github.com/bwmarrin/snowflake"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
+	"log"
 	"slim-connector-back/internal"
 )
 
 type TaskHandler struct {
 	collection *mongo.Collection
+	node       *snowflake.Node
 }
 
 func NewTaskHandler(initializer *internal.Initializer) *TaskHandler {
 	collection := initializer.Database.Collection("tasks")
-	return &TaskHandler{collection: collection}
+	node, err := snowflake.NewNode(1)
+	if err != nil {
+		log.Fatalf("Failed to initialize Snowflake node: %v", err)
+	}
+	return &TaskHandler{
+		collection: collection,
+		node:       node,
+	}
 }
 
 func (h *TaskHandler) InitRoute(group *gin.RouterGroup) {
