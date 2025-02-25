@@ -15,7 +15,7 @@ type TaskHandler struct {
 
 func NewTaskHandler(initializer *internal.Initializer) *TaskHandler {
 	collection := initializer.Database.Collection("tasks")
-	node, err := snowflake.NewNode(1)
+	node, err := snowflake.NewNode(5)
 	if err != nil {
 		log.Fatalf("Failed to initialize Snowflake node: %v", err)
 	}

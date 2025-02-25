@@ -2,6 +2,7 @@ package task
 
 import (
 	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
@@ -49,8 +50,10 @@ func (h *TaskHandler) CreateTask(c *gin.Context) {
 
 func (h *TaskHandler) CreateTaskFromAIResponse(task *model.Task) error {
 	task.CreatedAt = time.Now()
+	if h.node == nil {
+		return fmt.Errorf("Snowflake node is not initialized")
+	}
 	task.ID = h.node.Generate().String()
-
 	_, err := h.collection.InsertOne(context.Background(), task)
 	return err
 }

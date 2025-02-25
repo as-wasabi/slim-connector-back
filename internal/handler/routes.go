@@ -8,9 +8,10 @@ import (
 )
 
 func InitRoute(initializer *internal.Initializer) []internal.Route {
+	taskHandler := task.NewTaskHandler(initializer)
 	return []internal.Route{
 		user.NewUserHandler(initializer),
-		task.NewTaskHandler(initializer),
-		OpenAI.NewOpenAIHandler(initializer),
+		taskHandler,
+		OpenAI.NewOpenAIHandler(initializer, taskHandler),
 	}
 }

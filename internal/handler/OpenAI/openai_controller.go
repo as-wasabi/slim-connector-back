@@ -12,9 +12,12 @@ type OpenAIHandler struct {
 	TaskHandler *task.TaskHandler
 }
 
-func NewOpenAIHandler(initializer *internal.Initializer) *OpenAIHandler {
+func NewOpenAIHandler(initializer *internal.Initializer, taskHandler *task.TaskHandler) *OpenAIHandler {
 	collection := initializer.Database.Collection("openai")
-	return &OpenAIHandler{collection: collection}
+	return &OpenAIHandler{
+		collection:  collection,
+		TaskHandler: taskHandler,
+	}
 }
 
 func (h *OpenAIHandler) InitRoute(group *gin.RouterGroup) {
