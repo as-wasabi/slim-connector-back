@@ -24,7 +24,6 @@ func (h *TaskHandler) UpdateTask(c *gin.Context, task *model.Task) (*mongo.Updat
 
 func (h *TaskHandler) PatchTask(c *gin.Context) {
 	task, err := BindTaskJson(c)
-
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

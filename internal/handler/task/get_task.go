@@ -33,5 +33,4 @@ func (h *TaskHandler) GetTask(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, tasks)
-
 }

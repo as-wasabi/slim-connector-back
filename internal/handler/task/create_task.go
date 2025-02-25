@@ -25,7 +25,6 @@ func (h *TaskHandler) InsertTaskData(task *model.Task) (*mongo.InsertOneResult, 
 }
 
 func (h *TaskHandler) CreateTask(c *gin.Context) {
-
 	task, err := BindTaskJson(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

@@ -38,7 +38,7 @@ func CreateNewClient() (*openai.Client, error) {
 	return client, nil
 }
 
-func GetAIResponse(client *openai.Client) (*openai.ChatCompletion, error) {
+func GetAIResponse(client *openai.Client, userPrompt string) (*openai.ChatCompletion, error) {
 	// UTCに変える...?
 	systemPrompt := `あなたはスケジュール管理AIです。
 [開始日時]「終了日時」は次のレイアウトに従ってください。
@@ -57,7 +57,7 @@ layout = "2006-01-02T15:04:05Z07:00"
 	chatCompletion, err := client.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{
 		Messages: openai.F([]openai.ChatCompletionMessageParamUnion{
 			openai.SystemMessage(systemPrompt),
-			openai.UserMessage("明日10時から12時まで新宿で会議がある"),
+			openai.UserMessage(userPrompt),
 		}),
 		Model: openai.F(openai.ChatModelGPT4o),
 	})
@@ -86,7 +86,10 @@ func (h *OpenAIHandler) ExtractedTask(c *gin.Context) {
 		return
 	}
 
-	chatCompletion, err := GetAIResponse(client)
+	//userPrompt := c.Param("prompt")
+	userPrompt := ""
+
+	chatCompletion, err := GetAIResponse(client, userPrompt)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to GET AI response"})
 	}
