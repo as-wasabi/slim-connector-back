@@ -19,6 +19,9 @@ type ExtractedInfo struct {
 	End     time.Time `json:"end" bson:"end"`
 	Context string    `json:"context" bson:"context"`
 }
+type promptRequest struct {
+	Prompt string `json:"prompt"`
+}
 
 func LoadEnv() error {
 	err := godotenv.Load()
@@ -53,7 +56,6 @@ layout = "2006-01-02T15:04:05Z07:00"
 
 見つからない場合は "start" または "end" を null にしてください。
 {}の中身以外の内容は出力しないようにしてください
-今日の日付は2025年2月18日です。
 `
 	chatCompletion, err := client.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{
 		Messages: openai.F([]openai.ChatCompletionMessageParamUnion{
@@ -88,10 +90,18 @@ func (h *OpenAIHandler) ExtractedTask(c *gin.Context) {
 		return
 	}
 
-	//userPrompt := c.Param("prompt")
-	userPrompt := "以下の条件で予定を作成してください。\n\n- 開始日: 2025年3月10日\n- 終了日: 2025年3月12日\n- 内容: 新しいタスク管理ツールの設計と実装\n\n詳細:  \nこの期間中に、新しいタスク管理ツールの基本設計と初期実装を行います。要件定義、データベース設計、UIワイヤーフレームの作成を含めて、効率的に進めるための計画を立ててください。\n"
+	var req promptRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Json"})
+		return
+	}
 
-	chatCompletion, err := GetAIResponse(client, userPrompt)
+	//userPrompt := "以下の条件で予定を作成してください。\n\n- 開始日: 2025年3月10日\n- 終了日: 2025年3月12日\n- " +
+	//	"内容: 新しいタスク管理ツールの設計と実装\n\n" +
+	//	"詳細:  \nこの期間中に、新しいタスク管理ツールの基本設計と初期実装を行います。" +
+	//	"要件定義、データベース設計、UIワイヤーフレームの作成を含めて、効率的に進めるための計画を立ててください。\n"
+
+	chatCompletion, err := GetAIResponse(client, req.Prompt)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to GET AI response"})
 	}
