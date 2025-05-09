@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="main" type="GoApplicationRunConfiguration" factoryName="Go Application">
+    <module name="slim-connector-back" />
+    <working_directory value="$PROJECT_DIR$" />
+    <kind value="PACKAGE" />
+    <package value="slim-connector-back/cmd/tasq" />
+    <directory value="$PROJECT_DIR$" />
+    <filePath value="$PROJECT_DIR$/cmd/tasq/main.go" />
+    <method v="2" />
+  </configuration>
+</component>
