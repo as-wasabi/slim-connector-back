@@ -21,5 +21,5 @@ func NewOpenAIHandler(initializer *internal.Initializer, taskHandler *task.TaskH
 }
 
 func (h *OpenAIHandler) InitRoute(group *gin.RouterGroup) {
-	group.GET("/openai", h.ExtractedTask)
+	group.POST("/openai", h.ExtractedTask)
 }
