@@ -14,8 +14,7 @@ func NewUserHandler(initializer *internal.Initializer) *UserHandler {
 	collection := initializer.Database.Collection("users")
 	return &UserHandler{collection: collection}
 }
-func (h *UserHandler) InitRoute(group *gin.RouterGroup) {
-	group.POST("/users", h.CreateUser)
-	group.GET("/users", h.GetUsers)
-	group.PATCH("/users", h.PatchUser)
+func (receiver UserHandler) InitRoute(group *gin.RouterGroup) {
+	group.POST("/users", receiver.CreateUser)
+	group.GET("/users", receiver.GetUsers)
 }

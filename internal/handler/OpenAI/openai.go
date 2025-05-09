@@ -111,9 +111,11 @@ func (h *OpenAIHandler) ExtractedTask(c *gin.Context) {
 	}
 
 	// 今は自動的にタスク登録されちゃうよーん
-	err = h.TaskHandler.CreateTaskFromAIResponse(taskData)
+	//err = h.TaskHandler.CreateTaskFromAIResponse(taskData)
 
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
-	}
+	//if err != nil {
+	//	c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+	//}
+
+	c.JSON(http.StatusOK, taskData)
 }
