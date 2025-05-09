@@ -1,0 +1,7 @@
+mongodb:
+  host: localhost
+  port: 27017
+  username: root
+  password: password
+  database: tasq
+  uri: "mongodb://root:password@localhost:27017/?authSource=admin"
