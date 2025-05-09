@@ -61,6 +61,7 @@ layout = "2006-01-02T15:04:05Z07:00"
 			openai.UserMessage(userPrompt),
 		}),
 		Model: openai.F(openai.ChatModelGPT4o),
+		//	ここで呼び出し
 	})
 
 	return chatCompletion, err
@@ -102,13 +103,16 @@ func (h *OpenAIHandler) ExtractedTask(c *gin.Context) {
 		return
 	}
 
+	//　これをJson形式で返してフロントでチェックした後にCreateTaskでもたたけばいいんじゃね？
 	taskData := &model.Task{
 		Start:   extracted.Start,
 		End:     extracted.End,
 		Context: extracted.Context,
 	}
 
+	// 今は自動的にタスク登録されちゃうよーん
 	err = h.TaskHandler.CreateTaskFromAIResponse(taskData)
+
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
 	}

@@ -12,6 +12,7 @@ type Initializer struct {
 	*server.Server
 	*gin.Engine
 }
+
 type Route interface {
 	InitRoute(group *gin.RouterGroup)
 }

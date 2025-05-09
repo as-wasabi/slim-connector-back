@@ -29,6 +29,7 @@ func (h *TaskHandler) InitRoute(group *gin.RouterGroup) {
 	group.GET("/tasks", h.GetTask)
 	group.GET("/tasks/analysis", h.TaskAnalysis)
 	group.POST("/tasks", h.CreateTask)
+	group.POST("/tasks/:id/create", h.CreateTaskFromDependence)
 	group.PATCH("/tasks", h.PatchTask)
 
 }
