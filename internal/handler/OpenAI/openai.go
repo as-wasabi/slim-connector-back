@@ -47,8 +47,9 @@ func CreateNewClient() (*openai.Client, error) {
 }
 
 func GetAIResponse(client *openai.Client, userPrompt string) (*openai.ChatCompletion, error) {
+	today := time.Now().UTC().Format("YYYY-MM-DD")
 	// UTCに変える...?
-	systemPrompt := `あなたはスケジュール管理AIです。
+	systemPrompt := fmt.Sprintf(`あなたはスケジュール管理AIです。
 [開始日時]「終了日時」は次のレイアウトに従ってください。
 layout = "2006-01-02T15:04:05Z07:00"
 ユーザーの入力から予定の「開始日時」「終了日時」「コンテキスト」を抽出し、以下の JSON 形式で出力してください。
@@ -60,8 +61,9 @@ layout = "2006-01-02T15:04:05Z07:00"
 
 見つからない場合は "start" または "end" を null にしてください。
 {}の中身以外の内容は出力しないようにしてください
-今日の日付は2025年2月18日です。
-`
+今日の日付は %s です。
+`, today)
+
 	chatCompletion, err := client.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{
 		Messages: openai.F([]openai.ChatCompletionMessageParamUnion{
 			openai.SystemMessage(systemPrompt),
