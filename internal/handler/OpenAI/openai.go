@@ -93,8 +93,8 @@ func (h *OpenAIHandler) ExtractedTask(c *gin.Context) {
 		return
 	}
 
-	//userPrompt := c.Param("prompt")
-	userPrompt := "以下の条件で予定を作成してください。\n\n- 開始日: 2025年3月10日\n- 終了日: 2025年3月12日\n- 内容: 新しいタスク管理ツールの設計と実装\n\n詳細:  \nこの期間中に、新しいタスク管理ツールの基本設計と初期実装を行います。要件定義、データベース設計、UIワイヤーフレームの作成を含めて、効率的に進めるための計画を立ててください。\n"
+	userPrompt := c.Param("prompt")
+	//userPrompt := "以下の条件で予定を作成してください。\n\n- 開始日: 2025年3月10日\n- 終了日: 2025年3月12日\n- 内容: 新しいタスク管理ツールの設計と実装\n\n詳細:  \nこの期間中に、新しいタスク管理ツールの基本設計と初期実装を行います。要件定義、データベース設計、UIワイヤーフレームの作成を含めて、効率的に進めるための計画を立ててください。\n"
 
 	chatCompletion, err := GetAIResponse(client, userPrompt)
 	if err != nil {
