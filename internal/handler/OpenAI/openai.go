@@ -21,6 +21,10 @@ type ExtractedInfo struct {
 }
 
 func LoadEnv() error {
+	if _, err := os.Stat(".env"); os.IsNotExist(err) {
+		return fmt.Errorf(".env file does not exist")
+	}
+
 	err := godotenv.Load()
 	if err != nil {
 		return err
@@ -81,6 +85,7 @@ func (h *OpenAIHandler) ExtractedTask(c *gin.Context) {
 	err := LoadEnv()
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"Not Found .ENV FILE": "error"})
+		return
 	}
 	client, err := CreateNewClient()
 	if err != nil {
